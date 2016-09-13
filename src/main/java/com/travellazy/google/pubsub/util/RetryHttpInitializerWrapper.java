@@ -6,6 +6,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.client.util.Sleeper;
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -65,26 +66,32 @@ class RetryHttpInitializerWrapper implements HttpRequestInitializer {
                         new ExponentialBackOff())
                         .setSleeper(sleeper);
         request.setInterceptor(wrappedCredential);
-        request.setUnsuccessfulResponseHandler(
-                (request1, response, supportsRetry) -> {
-                    if (wrappedCredential.handleResponse(
-                            request1, response, supportsRetry)) {
-                        // If credential decides it can handle it,
-                        // the return code or message indicated
-                        // something specific to authentication,
-                        // and no backoff is desired.
-                        return true;
-                    } else if (backoffHandler.handleResponse(
-                            request1, response, supportsRetry)) {
-                        // Otherwise, we defer to the judgement of
-                        // our internal backoff handler.
-                        LOG.info("Retrying "
-                                + request1.getUrl().toString());
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
+        request.setUnsuccessfulResponseHandler(new HttpUnsuccessfulResponseHandler()
+        {
+            @Override
+            public boolean handleResponse(HttpRequest request1, HttpResponse response, boolean supportsRetry) throws IOException
+            {
+                if (wrappedCredential.handleResponse(request1, response, supportsRetry))
+                {
+                    // If credential decides it can handle it,
+                    // the return code or message indicated
+                    // something specific to authentication,
+                    // and no backoff is desired.
+                    return true;
+                }
+                else if (backoffHandler.handleResponse(request1, response, supportsRetry))
+                {
+                    // Otherwise, we defer to the judgement of
+                    // our internal backoff handler.
+                    LOG.info("Retrying " + request1.getUrl().toString());
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        });
         request.setIOExceptionHandler(new HttpBackOffIOExceptionHandler(new ExponentialBackOff()).setSleeper(sleeper));
     }
 }
