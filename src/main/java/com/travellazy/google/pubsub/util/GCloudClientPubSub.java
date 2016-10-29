@@ -22,10 +22,9 @@ import java.io.IOException;
 public interface GCloudClientPubSub {
 
     /**
-     *
-     * @param fullCallbackUrlEndpoint
-     * @param fullTopicName
-     * @param fullSubscriptionName
+     * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
+     * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
+     * @param fullTopicName           like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
      * @throws IOException
      */
     void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
@@ -33,10 +32,9 @@ public interface GCloudClientPubSub {
                                         final String fullSubscriptionName) throws IOException;
 
     /**
-     *
-     * @param fullTopicName
-     * @param message
+     * @param fullTopicName         like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
+     * @param base64EncodedMessage  the base64Encoded message
      * @throws IOException
      */
-    void sendMessage(final String fullTopicName, final String message) throws IOException;
+    void sendMessage(final String fullTopicName, final String base64EncodedMessage) throws IOException;
 }

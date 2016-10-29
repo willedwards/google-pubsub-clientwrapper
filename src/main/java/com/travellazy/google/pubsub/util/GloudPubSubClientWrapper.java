@@ -27,16 +27,16 @@ import java.util.logging.Logger;
 
 public class GloudPubSubClientWrapper implements GCloudClientPubSub
 {
+    private static final int DEFAULT_SUBSCRIPTION_ACK_DEADLINE_SECONDS = 10;
     private final Pubsub client;
     private static final java.util.logging.Logger logger = Logger.getLogger(GloudPubSubClientWrapper.class.getName());
     private final int subscriptionAckDeadlineSeconds;
-
     /**
      * The application name is like "google-cloud-pubsub-appengine-sample/1.0"
-     * @param applicationName
+     * @param applicationName  your application name
      */
     public GloudPubSubClientWrapper(final String applicationName)  {
-       this(applicationName,10);
+       this(applicationName,DEFAULT_SUBSCRIPTION_ACK_DEADLINE_SECONDS);
     }
 
     public GloudPubSubClientWrapper(final String applicationName, final int subscriptionAckDeadlineSeconds)  {
