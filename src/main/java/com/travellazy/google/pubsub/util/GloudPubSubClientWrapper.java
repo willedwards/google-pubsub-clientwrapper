@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.travellazy.google.pubsub.util;
 
 
@@ -65,11 +80,18 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
      */
     private void createTopicIfDoesntExist(String fullTopicName) throws IOException {
         try {
+            logger.fine("about to create to topic " + fullTopicName);
+
             client.projects().topics().get(fullTopicName).execute();
+
+            logger.fine("topic " + fullTopicName + " already exists");
         } catch (GoogleJsonResponseException e) {
             if (e.getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
-                // Create the topic if it doesn't exist
+                logger.fine("topic " + fullTopicName + " about to be created");
+
                 client.projects().topics().create(fullTopicName, new Topic()).execute();
+
+                logger.fine("topic " + fullTopicName + " created");
             } else {
                 throw e;
             }
@@ -95,9 +117,9 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
 
     /**
      *
-     * @param fullCallbackUrlEndpoint like https://<projectId>.appspot.com/messages/async
-     * @param fullSubscriptionName
-     * @param fullTopicName
+     * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
+     * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
+     * @param fullTopicName           like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
      * @throws IOException
      */
     private void createNewAsyncCallbackSubscription(final String fullCallbackUrlEndpoint,
