@@ -37,4 +37,12 @@ public interface GCloudClientPubSub {
      * @throws IOException
      */
     void sendMessage(final String fullTopicName, final String base64EncodedMessage) throws IOException;
+
+    /**
+     *
+     * @param fullTopicName    like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
+     *                         if the topic exists, it will not be created again, no exception will be thrown
+     * @throws IOException
+     */
+    void createTopic(final String fullTopicName) throws IOException;
 }

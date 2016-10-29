@@ -48,7 +48,7 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
     public void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
                                                final String fullTopicName,
                                                final String fullSubscriptionName) throws IOException{
-            createTopicIfDoesntExist(fullTopicName);
+            createTopic(fullTopicName);
 
             createSubscriptionIfDoesntExist(
                     fullCallbackUrlEndpoint,
@@ -74,11 +74,8 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
         logger.fine("message sent to topic " + fullTopicName);
     }
 
-    /**
-     * Creates a Cloud Pub/Sub topic if it doesn't exist.
-     * @throws IOException when API calls to Cloud Pub/Sub fails.
-     */
-    private void createTopicIfDoesntExist(String fullTopicName) throws IOException {
+    @Override
+    public void createTopic(String fullTopicName) throws IOException {
         try {
             logger.fine("about to create to topic " + fullTopicName);
 
