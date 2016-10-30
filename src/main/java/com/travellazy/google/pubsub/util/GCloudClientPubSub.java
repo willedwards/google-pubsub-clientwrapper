@@ -17,32 +17,53 @@
 package com.travellazy.google.pubsub.util;
 
 
+import com.google.api.services.pubsub.Pubsub;
+
 import java.io.IOException;
 
 public interface GCloudClientPubSub {
 
-    /**
-     * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
-     * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
-     * @param fullTopicName           like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
-     * @throws IOException
-     */
-    void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
-                                        final String fullTopicName,
-                                        final String fullSubscriptionName) throws IOException;
-
-    /**
-     * @param fullTopicName         like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
-     * @param base64EncodedMessage  the base64Encoded message
-     * @throws IOException
-     */
-    void sendMessage(final String fullTopicName, final String base64EncodedMessage) throws IOException;
+//    /**
+//     * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
+//     * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
+//     * @param topicName               like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
+//     *                                @Deprecated -use the other methods below
+//     * @throws IOException
+//     */
+//    void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
+//                                        final String topicName,
+//                                        final String fullSubscriptionName) throws IOException;
 
     /**
      *
-     * @param fullTopicName    like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
+     * @param topicName    like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
      *                         if the topic exists, it will not be created again, no exception will be thrown
+     * @return              the full topic name
      * @throws IOException
      */
-    void createTopic(final String fullTopicName) throws IOException;
+    TopicValue createTopic(final String topicName) throws IOException;
+
+    Pubsub.Projects.Topics.List listTopics() throws IOException;
+
+    Pubsub.Projects.Subscriptions.List listSubscriptions() throws IOException;
+
+    /**
+     *
+     * @param topicValue     the topic subscribed to
+     * @param subscription   the subscription name
+     * @return               an object encapsulating these two.
+     */
+    SubscriptionValue createSubscriptionForTopic(final TopicValue topicValue, final String subscription, final String endpointUrl) throws IOException;
+
+
+    /**
+     * @param topicKey            like topic-pubsub-api-appengine-sample
+     * @param base64EncodedMessage  the base64Encoded message
+     * @throws IOException
+     */
+    void sendMessage(final String topicKey, final String base64EncodedMessage) throws IOException;
+
+
+
+
 }

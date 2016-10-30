@@ -25,47 +25,56 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-public class GloudPubSubClientWrapper implements GCloudClientPubSub
-{
+public class GloudPubSubClientWrapper implements GCloudClientPubSub {
     private static final int DEFAULT_SUBSCRIPTION_ACK_DEADLINE_SECONDS = 10;
     private final Pubsub client;
     private static final java.util.logging.Logger logger = Logger.getLogger(GloudPubSubClientWrapper.class.getName());
     private final int subscriptionAckDeadlineSeconds;
+    private final String projectTopicPrefix;
+    private final String projectSubscriptionPrefix;
+    private final String projectId;
     /**
      * The application name is like "google-cloud-pubsub-appengine-sample/1.0"
-     * @param applicationName  your application name
+     *
+     * @param projectId your projectId
      */
-    public GloudPubSubClientWrapper(final String applicationName)  {
-       this(applicationName,DEFAULT_SUBSCRIPTION_ACK_DEADLINE_SECONDS);
+    public GloudPubSubClientWrapper(final String projectId) {
+        this(projectId, DEFAULT_SUBSCRIPTION_ACK_DEADLINE_SECONDS);
     }
 
-    public GloudPubSubClientWrapper(final String applicationName, final int subscriptionAckDeadlineSeconds)  {
+    public GloudPubSubClientWrapper(final String projectId, final int subscriptionAckDeadlineSeconds) {
         this.subscriptionAckDeadlineSeconds = subscriptionAckDeadlineSeconds;
-        client =  new PubsubUtils(applicationName).getClient();
+        this.projectId = projectId;
+        projectTopicPrefix = "projects/" + projectId + "/topics/";
+        projectSubscriptionPrefix = "projects/" + projectId + "/subscriptions/";
+        client = new PubsubUtils(projectId).getClient();
     }
 
+//    @Override
+//    public void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
+//                                               final String topicName,
+//                                               final String fullSubscriptionName) throws IOException {
+//
+//        TopicValue topicValue = createTopic(topicName);
+//
+//        createSubscriptionIfDoesntExist(
+//                fullCallbackUrlEndpoint,
+//                fullSubscriptionName,
+//                topicName);
+//
+//        logger.info("Created: " + fullSubscriptionName);
+//
+//    }
+
     @Override
-    public void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
-                                               final String fullTopicName,
-                                               final String fullSubscriptionName) throws IOException{
-            createTopic(fullTopicName);
-
-            createSubscriptionIfDoesntExist(
-                    fullCallbackUrlEndpoint,
-                    fullSubscriptionName,
-                    fullTopicName);
-
-        logger.info("Created: " + fullSubscriptionName);
-
-    }
-
-    @Override
-    public void sendMessage(final String fullTopicName, final String message) throws IOException {
+    public void sendMessage(final String topicKey, final String message) throws IOException {
 
         PubsubMessage pubsubMessage = new PubsubMessage();
         pubsubMessage.encodeData(message.getBytes("UTF-8"));
         PublishRequest publishRequest = new PublishRequest();
         publishRequest.setMessages(ImmutableList.of(pubsubMessage));
+
+        String fullTopicName = projectTopicPrefix + topicKey;
 
         logger.fine("about to send to topic " + fullTopicName);
 
@@ -75,37 +84,84 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
     }
 
     @Override
-    public void createTopic(String fullTopicName) throws IOException {
+    public TopicValue createTopic(String topicName) throws IOException {
+        String fullTopicName = projectTopicPrefix + topicName;
+        TopicValue topicValue;
         try {
+
             logger.fine("about to create to topic " + fullTopicName);
 
             client.projects().topics().get(fullTopicName).execute();
 
+            topicValue = new TopicValue(projectTopicPrefix, topicName, State.ALREADY_EXISTS);
             logger.fine("topic " + fullTopicName + " already exists");
         } catch (GoogleJsonResponseException e) {
             if (e.getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
                 logger.fine("topic " + fullTopicName + " about to be created");
 
                 client.projects().topics().create(fullTopicName, new Topic()).execute();
-
+                topicValue = new TopicValue(projectTopicPrefix, topicName, State.CREATED);
                 logger.fine("topic " + fullTopicName + " created");
             } else {
                 throw e;
             }
         }
+        return topicValue;
     }
+
+    @Override
+    public Pubsub.Projects.Topics.List listTopics() throws IOException {
+        return client.projects().topics().list("projects/"+projectId);
+    }
+
+    @Override
+    public Pubsub.Projects.Subscriptions.List listSubscriptions() throws IOException {
+        return client.projects().subscriptions().list("projects/"+projectId);
+    }
+
+    @Override
+    public SubscriptionValue createSubscriptionForTopic(final TopicValue topic, final String subscriptionName, final String fullCallbackUrlEndpoint) throws IOException {
+
+        final String fullSubscriptionName = projectSubscriptionPrefix + subscriptionName;
+        SubscriptionValue subscriptionValue;
+        try {
+            client.projects().subscriptions().get(fullSubscriptionName).execute();
+
+            subscriptionValue = new SubscriptionValue(fullSubscriptionName,
+                                                    fullCallbackUrlEndpoint,
+                                                    topic,
+                                                    State.ALREADY_EXISTS);
+
+        } catch (GoogleJsonResponseException e) {
+            if (e.getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+                // Create the subscription if it doesn't exist
+                createNewAsyncCallbackSubscription(fullCallbackUrlEndpoint, fullSubscriptionName, topic.getFullTopicName());
+
+                subscriptionValue = new SubscriptionValue(fullSubscriptionName,
+                                                            fullCallbackUrlEndpoint,
+                                                            topic,
+                                                            State.CREATED);
+            } else {
+                throw e;
+            }
+        }
+        return subscriptionValue;
+    }
+
 
     /**
      * Creates a Cloud Pub/Sub subscription if it doesn't exist.
+     *
      * @throws IOException when API calls to Cloud Pub/Sub fails.
      */
-    private void createSubscriptionIfDoesntExist(final String fullCallbackUrlEndpoint, final String fullSubscriptionName, final String fullTopicName) throws IOException {
+    private void createSubscriptionIfDoesntExist(final String fullCallbackUrlEndpoint, final String fullSubscriptionName, final String topicName) throws IOException {
+        String fullTopicName = projectTopicPrefix + topicName;
         try {
             client.projects().subscriptions().get(fullSubscriptionName).execute();
         } catch (GoogleJsonResponseException e) {
             if (e.getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
                 // Create the subscription if it doesn't exist
-                createNewAsyncCallbackSubscription(fullCallbackUrlEndpoint,fullSubscriptionName,fullTopicName);
+                createNewAsyncCallbackSubscription(fullCallbackUrlEndpoint, fullSubscriptionName, fullTopicName);
             } else {
                 throw e;
             }
@@ -113,7 +169,6 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub
     }
 
     /**
-     *
      * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
      * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
      * @param fullTopicName           like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
