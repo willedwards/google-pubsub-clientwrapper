@@ -50,21 +50,6 @@ public class GloudPubSubClientWrapper implements GCloudClientPubSub {
         client = new PubsubUtils(projectId).getClient();
     }
 
-//    @Override
-//    public void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
-//                                               final String topicName,
-//                                               final String fullSubscriptionName) throws IOException {
-//
-//        TopicValue topicValue = createTopic(topicName);
-//
-//        createSubscriptionIfDoesntExist(
-//                fullCallbackUrlEndpoint,
-//                fullSubscriptionName,
-//                topicName);
-//
-//        logger.info("Created: " + fullSubscriptionName);
-//
-//    }
 
     @Override
     public void sendMessage(final String topicKey, final String message) throws IOException {

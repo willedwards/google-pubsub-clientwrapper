@@ -15,24 +15,10 @@
  */
 
 package com.travellazy.google.pubsub.util;
-
-
 import com.google.api.services.pubsub.Pubsub;
-
 import java.io.IOException;
 
 public interface GCloudClientPubSub {
-
-//    /**
-//     * @param fullCallbackUrlEndpoint like https://mprojectId.appspot.com/messages/async
-//     * @param fullSubscriptionName    like projects/myprojectId/subscriptions/subscription-myprojectId
-//     * @param topicName               like projects/myprojectId/topics/topic-pubsub-api-appengine-sample
-//     *                                @Deprecated -use the other methods below
-//     * @throws IOException
-//     */
-//    void createAsyncCallbackURLForTopic(final String fullCallbackUrlEndpoint,
-//                                        final String topicName,
-//                                        final String fullSubscriptionName) throws IOException;
 
     /**
      *
