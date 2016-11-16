@@ -4,7 +4,7 @@
 
   <groupId>com.travellazy.google.pubsub</groupId>
   <artifactId>client</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.O</version>
   <packaging>jar</packaging>
 
   <name>client</name>
