@@ -1,5 +1,4 @@
-# google-pubsub-clientwrapper
-![Build Status](https://travis-ci.org/willedwards/google-pubsub-clientwrapper.svg?branch=master)
+# google-pubsub-clientwrapper ![Build Status](https://travis-ci.org/willedwards/google-pubsub-clientwrapper.svg?branch=master)
 
 A handy wrapper to abstract away Google pubsub client
 
