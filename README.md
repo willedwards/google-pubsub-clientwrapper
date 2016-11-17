@@ -1,4 +1,7 @@
 # google-pubsub-clientwrapper
+
+https://travis-ci.org/willedwards/google-pubsub-clientwrapper.svg?branch=master
+
 A handy wrapper to abstract away Google pubsub client
 
 Only 2 places required for usage in your project.
