@@ -1,7 +1,4 @@
 language: java
-
-jdk:
-  - oraclejdk7
-
-mvn test
+sudo: false
+scrpt: mvn clean verify
 
