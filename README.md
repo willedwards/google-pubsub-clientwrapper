@@ -2,6 +2,14 @@
 
 A handy wrapper to abstract away Google pubsub client
 
+This will allow you to do the following from your appengine:
+
+ - create or find a topic
+ - list all topics
+ - subscribe to a topic, and set a URL to callback
+ - list all subscriptions
+ - send a message to a topic
+
 Only 2 places required for usage in your project.
 
 ### Pom Usage
