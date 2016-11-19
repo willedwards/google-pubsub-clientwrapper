@@ -1,6 +1,13 @@
 # google-pubsub-clientwrapper ![Build Status](https://travis-ci.org/willedwards/google-pubsub-clientwrapper.svg?branch=master)
 
 A handy wrapper to abstract away Google pubsub client
+=======
+# google-pubsub-clientwrapper
+A handy wrapper to abstract away Google pubsub client into a [MessageService](https://github.com/willedwards/google-pubsub-clientwrapper/blob/master/src/main/java/com/travellazy/google/pubsub/service/MessageService.java
+) interface which you simply call.
+
+
+
 
 This will allow you to do the following from your appengine:
 
@@ -18,7 +25,7 @@ Only 2 places required for usage in your project.
        <dependency>
             <groupId>com.travellazy.google.pubsub</groupId>
             <artifactId>client</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.0</version>
         </dependency>
 ```
 

@@ -1,5 +1,9 @@
 package com.travellazy.google.pubsub.util;
 
+/**
+ * @author William Edwards
+ */
+
 public class TopicValue {
 
     private final State state;

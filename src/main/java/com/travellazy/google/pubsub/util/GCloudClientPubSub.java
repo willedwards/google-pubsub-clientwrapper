@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * @author William Edwards
+ */
 package com.travellazy.google.pubsub.util;
 import com.google.api.services.pubsub.Pubsub;
 import java.io.IOException;

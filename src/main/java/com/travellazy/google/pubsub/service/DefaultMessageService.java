@@ -16,6 +16,9 @@ package com.travellazy.google.pubsub.service;
  * under the License.
  */
 
+/**
+ * @author William Edwards
+ */
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.*;
 import com.travellazy.google.pubsub.util.GCloudClientPubSub;

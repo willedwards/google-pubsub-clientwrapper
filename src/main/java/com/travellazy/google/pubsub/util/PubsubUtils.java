@@ -14,6 +14,9 @@
  * under the License.
  */
 
+/**
+ * @author William Edwards
+ */
 package com.travellazy.google.pubsub.util;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;

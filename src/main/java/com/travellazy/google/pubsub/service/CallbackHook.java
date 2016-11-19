@@ -17,7 +17,9 @@ package com.travellazy.google.pubsub.service;
  */
 import com.google.api.services.pubsub.model.PubsubMessage;
 
-
+/**
+ * @author William Edwards
+ */
 public interface CallbackHook {
     /**
      * Mechanism for an external caller to do something useful on receiving a PubsubMessage

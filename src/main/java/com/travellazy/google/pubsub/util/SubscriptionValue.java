@@ -1,8 +1,7 @@
 package com.travellazy.google.pubsub.util;/**
- * Author: wge
- * Date: 30/10/2016
- * Time: 15:21
- */
+ /**
+  * @author William Edwards
+  */
 
 public class SubscriptionValue {
 

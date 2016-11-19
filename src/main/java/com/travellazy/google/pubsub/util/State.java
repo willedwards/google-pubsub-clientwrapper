@@ -1,5 +1,9 @@
 package com.travellazy.google.pubsub.util;
 
+/**
+ * @author William Edwards
+ */
+
 public enum State {
     CREATED("created"),
     ALREADY_EXISTS("exists");
